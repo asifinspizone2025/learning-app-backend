@@ -89,12 +89,9 @@ const uploadNoteFile = (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
-  const host = process.env.SERVER_HOST || req.hostname;
-  const port = process.env.PORT || 5000;
-  const fileUrl = `http://${host}:${port}/uploads/${req.file.filename}`;
   const fileType = getFileType(req.file.mimetype);
 
-  return res.status(200).json({ url: fileUrl, fileType });
+  return res.status(200).json({ url: req.file.path, fileType });
 };
 
 // Get all notes across all subjects, grouped for easy display.

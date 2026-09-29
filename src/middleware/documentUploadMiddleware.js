@@ -1,14 +1,16 @@
 const multer = require('multer');
-const path = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
 
-// Stores uploaded notes (PDF, DOC/DOCX, images) in the /uploads folder.
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+// Uploads note documents (PDF, DOC/DOCX, images) directly to Cloudinary.
+// resource_type "auto" lets Cloudinary correctly handle non-image files
+// like PDFs and Word documents, which it treats as "raw" resources.
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'learning-app/notes',
+    resource_type: 'auto',
+    allowed_formats: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'webp'],
   },
 });
 

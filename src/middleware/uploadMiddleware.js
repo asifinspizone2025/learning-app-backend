@@ -1,15 +1,14 @@
 const multer = require('multer');
-const path = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
 
-// Stores uploaded images in the /uploads folder with a unique filename
-// so multiple uploads never overwrite each other.
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+// Uploads images directly to Cloudinary instead of local disk, so files
+// persist permanently and survive server restarts/redeploys on Render.
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'learning-app/images',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
   },
 });
 
